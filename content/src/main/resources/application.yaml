@@ -1,0 +1,17 @@
+spring:
+    application:
+        name: content
+        
+    datasource:
+        url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5430/predman-db}
+        username: ${DB_USER:admin}
+        password: ${DB_PASSWORD:admin}
+    
+    liquibase:
+      change-log: db/changelog-master.yaml
+      enabled: true
+
+    jpa:
+      show-sql: true
+      hibernate:
+        ddl-auto: none
