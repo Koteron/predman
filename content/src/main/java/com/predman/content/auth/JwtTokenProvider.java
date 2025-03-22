@@ -3,12 +3,15 @@ package com.predman.content.auth;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.security.Key;
 import java.util.Date;
 
@@ -18,17 +21,22 @@ public class JwtTokenProvider {
 
     private final Key key;
 
-    JwtTokenProvider() throws IOException {
+    JwtTokenProvider(@Value("classpath:.config") Resource jwtConfig) throws IOException {
         String secretKey;
-        ClassPathResource resource = new ClassPathResource(".config");
-        String[] parts = Files.readAllLines(resource.getFile().toPath()).getFirst().split(":", 2);
-        if (parts[0].equals("JWT_KEY")) {
-            secretKey = parts[1];
+        try (InputStream is = jwtConfig.getInputStream();
+             BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+
+            String line = reader.readLine();
+            String[] parts = line.strip().split(":", 2);
+
+            if (parts.length == 2 && parts[0].equals("JWT_KEY")) {
+                secretKey = parts[1];
+            } else {
+                throw new JwtException("Not found JWT secret key");
+            }
+
+            this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
         }
-        else {
-            throw new JwtException("Not found JWT secret key");
-        }
-        key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
     public String generateToken(String email) {

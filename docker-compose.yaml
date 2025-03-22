@@ -13,7 +13,28 @@ services:
             - '5430:5432'
         volumes:
             - db:/var/lib/postgresql/predman
+        networks:
+            - predman-network
+
+    predman-content-service:
+        image: predman-content-service:latest
+        build:
+            context: ./content
+            dockerfile: Dockerfile
+        container_name: predman-content-service
+        depends_on:
+            - predman-db
+        ports:
+            - "8090:8090"
+        environment:
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://predman-db/predman-db
+        networks:
+            - predman-network
             
 volumes:
     db:
         driver: local
+
+networks:
+    predman-network:
+        driver: bridge
