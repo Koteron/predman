@@ -1,0 +1,7 @@
+TRAIN_DATASET_SIZE = 15000
+TEST_DATASET_SIZE = 2500
+
+TRAIN_DATASET_FILEPATH = './train_dataset'
+TEST_DATASET_FILEPATH = './test_dataset'
+CHECKPOINT_FILEPATH = './checkpoints/best_model.weights.h5'
+NUM_FEATURES = 9

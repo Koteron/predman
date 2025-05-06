@@ -19,7 +19,7 @@ services:
     predman-content-service:
         image: predman-content-service:latest
         build:
-            context: ./content
+            context: ./Content_Service
             dockerfile: Dockerfile
         container_name: predman-content-service
         depends_on:
@@ -28,6 +28,27 @@ services:
             - "8090:8090"
         environment:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://predman-db/predman-db
+            - GRPC_SERVER_HOST=predman-nn-service
+            - GRPC_SERVER_PORT=50051
+        networks:
+            - predman-network
+
+    predman-nn-service:
+        image: predman-nn-service:latest
+        build:
+            context: ./Neural_Network_Service
+            dockerfile: Dockerfile
+        container_name: predman-nn-service
+        depends_on:
+            - predman-db
+        ports:
+            - "50051:50051"
+        environment:
+            - DATABASE_USER=admin
+            - DATABASE_PASSWORD=admin
+            - DATABASE_HOST=predman-db
+            - DATABASE_PORT=5432
+            - DATABASE_NAME=predman-db
         networks:
             - predman-network
             

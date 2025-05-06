@@ -1,0 +1,6 @@
+asyncpg
+grpcio
+grpcio-tools
+numpy
+scipy
+tensorflow
