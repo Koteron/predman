@@ -1,10 +1,7 @@
 package com.predman.content.service;
 
 import com.predman.content.dto.grpc.PredictionDto;
-import com.predman.content.dto.project.ProjectCreationDto;
-import com.predman.content.dto.project.ProjectDto;
-import com.predman.content.dto.project.ProjectFullInfoDto;
-import com.predman.content.dto.project.ProjectUpdateDto;
+import com.predman.content.dto.project.*;
 import com.predman.content.dto.user.detailed.UserDto;
 import com.predman.content.entity.Project;
 import com.predman.content.entity.User;
@@ -31,6 +28,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final EntityManager entityManager;
     private final UserService userService;
     private final ProjectStatisticsService projectStatisticsService;
+    private final TaskService taskService;
     private final StatisticsService statisticsService;
 
     ProjectServiceImpl(@Lazy ProjectMemberService projectMemberService,
@@ -39,6 +37,7 @@ public class ProjectServiceImpl implements ProjectService {
                        ProjectMapper projectMapper,
                        EntityManager entityManager,
                        @Lazy ProjectStatisticsService projectStatisticsService,
+                       @Lazy TaskService taskService,
                        StatisticsService statisticsService) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
@@ -47,6 +46,7 @@ public class ProjectServiceImpl implements ProjectService {
         this.userService = userService;
         this.projectStatisticsService = projectStatisticsService;
         this.statisticsService = statisticsService;
+        this.taskService = taskService;
     }
 
     @Override
@@ -143,6 +143,20 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Project owner not found!"));
         return projectMapper.convertToProjectDto(project);
+    }
+
+    @Override
+    public ProjectTaskListDto getWithTaskListById(UUID id) {
+        Project project = projectRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Project owner not found!"));
+        return ProjectTaskListDto
+                .builder()
+                .id(project.getId())
+                .ownerId(project.getOwner().getId())
+                .name(project.getName())
+                .description(project.getDescription())
+                .tasks(taskService.getAllByProjectId(project.getId()))
+                .build();
     }
 
     @Override

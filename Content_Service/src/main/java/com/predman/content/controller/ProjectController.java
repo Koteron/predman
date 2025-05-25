@@ -1,10 +1,7 @@
 package com.predman.content.controller;
 
 import com.predman.content.common.ProjectMembershipUtil;
-import com.predman.content.dto.project.ProjectCreationDto;
-import com.predman.content.dto.project.ProjectDto;
-import com.predman.content.dto.project.ProjectFullInfoDto;
-import com.predman.content.dto.project.ProjectUpdateDto;
+import com.predman.content.dto.project.*;
 import com.predman.content.dto.project_member.ProjectMemberUpdateDto;
 import com.predman.content.dto.project_member.ProjectMemberDto;
 import com.predman.content.dto.project_statistics.ProjectStatisticsDto;
@@ -50,6 +47,11 @@ public class ProjectController {
     @GetMapping("/{project-id}")
     public ProjectDto getProjectById(@PathVariable("project-id") UUID projectId) {
         return projectService.getById(projectId);
+    }
+
+    @GetMapping("/task_list/{project-id}")
+    public ProjectTaskListDto getProjectWithTaskListById(@PathVariable("project-id") UUID projectId) {
+        return projectService.getWithTaskListById(projectId);
     }
 
     @DeleteMapping("/{project-id}")
