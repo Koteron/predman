@@ -1,0 +1,102 @@
+.modal_form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.form_input {
+    border-radius: 10px;
+    padding: 7px 15px;
+    border: 1px solid black;
+    font-size: 17px;
+    text-align: center;
+}
+
+.submit_button {
+    background-color: rgb(12, 104, 169);
+}
+
+.delete_button{
+    background-color: rgb(46, 68, 128);
+}
+
+.delete_button:hover {
+    background-color: rgb(169, 12, 12);
+}
+
+.submit_button_container {
+    display: flex;
+    justify-content: space-around;
+    width: 70%
+}
+
+.outer_input_list_wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.inner_input_list_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.assignee_card {
+  background-color: rgb(42, 89, 154);
+  color: rgb(239, 239, 239);
+  border-radius: 10px;
+  padding: 5px 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  font-size: 15px;
+}
+
+.assignee_card_button {
+  position: absolute;
+  right: 5px;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+  color: rgb(141, 141, 141);
+  transition: color 0.2s ease;
+}
+
+.assignee_card_button:hover {
+  color: rgb(255, 215, 215);
+}
+
+.card_title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.assignee_list_wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; 
+    background-color: rgba(0, 162, 255, 0.104);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.add_button {
+    border: none;
+    background-color: rgba(4, 23, 50, 0.415);;
+    border-radius: 5px;
+    color: white;
+    font-size: medium;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease background-color
+}
+
+.add_button:hover {
+    background-color: rgba(4, 23, 50, 0.642);;
+    
+}

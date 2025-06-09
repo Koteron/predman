@@ -1,0 +1,82 @@
+.side_bar {
+    position: sticky;
+    top:0;
+    background-color: rgb(43, 43, 61);
+    height: 100vh;
+    width: clamp(240px, 20vw, 20vw);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow:
+    4px 0px 10px rgba(0, 0, 0, 0.599);
+}
+
+.side_bar_logo_wrapper {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    padding-bottom: 20px;
+    border-bottom: 3px solid black;
+}
+
+.side_bar_logo {
+    width: clamp(80%, 15vw, 25vw);
+    object-fit: contain;
+}
+
+.project_list_wrapper {
+    flex: 1;
+    width: 80%;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px
+}
+
+.side_bar_footer {
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    margin: 20px auto;
+    padding-top: 20px;
+    border-top: 3px solid black;
+}
+
+.project_button {
+    background-color: rgb(16, 117, 90);
+    color: rgb(156, 156, 156);
+    border: 2px solid rgb(16, 117, 90);
+    border-radius: 5px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project_button:hover {
+    background-color: rgb(17, 194, 114);
+    border: 2px solid rgb(17, 194, 114);
+    color: rgb(255, 255, 255);
+    width: 100%;
+}
+
+
+.project_button_disabled {
+    background-color: rgba(19, 59, 48, 0.633);
+    color: rgb(108, 108, 108);
+    border-radius: 5px;
+    border: 2px solid rgb(41, 84, 69);
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.project_button_disabled:hover {
+    background-color: rgba(19, 59, 48, 0.633);
+    color: rgb(108, 108, 108);
+    border: 2px solid rgb(41, 84, 69);
+    box-shadow: none;
+}

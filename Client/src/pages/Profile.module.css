@@ -1,0 +1,51 @@
+.page_wrapper {
+    background-color: aliceblue;
+    color: rgb(52, 94, 172);
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.profile_body_wrapper {
+    display: flex;
+    flex: 1;
+}
+
+.profile_body {
+    flex: 1;
+    margin: 3%;
+    border: 2px solid rgba(0, 0, 0, 0.101);
+    padding-left: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    justify-content: space-between;
+}
+
+.profile_label {
+    font-size: 4vh;
+}
+
+.logout_button {
+    background-color: rgb(164, 164, 164);
+}
+
+.logout_button:hover {
+    background-color: rgb(109, 109, 109);
+}
+
+.delete_button {
+    background-color: rgb(102, 102, 102);
+}
+
+.delete_button:hover {
+    background-color: rgb(199, 23, 23)
+}
+
+.profile_info_wrapper {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}

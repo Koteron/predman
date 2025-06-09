@@ -1,0 +1,60 @@
+.page_wrapper {
+    background-color: aliceblue;
+    color: rgb(52, 94, 172);
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+.project_wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}
+
+.project_header {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.title_wrapper {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
+.project_tabs {
+    width: 100%;
+}
+
+.tab {
+    width:50%;
+    background-color: rgba(0,0,0,0%);
+    cursor: pointer;
+    border: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.41);
+    padding: 7px 0;
+    font-size: 18px;
+}
+
+.tab:hover {
+    background-color: rgba(0, 0, 0, 0.104);
+}
+
+.tab_active {
+    background-color: rgba(47, 55, 116, 0.512);
+    color: white;
+}
+
+.tab_active:hover {
+    background-color: rgb(47, 62, 116);
+}
+
+.profile_button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}

@@ -1,0 +1,90 @@
+.column_wrapper {
+    margin-top: 10px;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    gap:0.5%
+}
+
+.column {
+    width:32.5%;
+    flex: 1;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    background-color: #0000000c;
+}
+
+
+.column_title {
+    border-bottom: 2px solid #ccc;
+    background-color: #0025360f;
+    color: rgb(55, 115, 143);
+    margin-top: 0;
+    padding: 10px 10px;
+    font-size: clamp(1.5vw, 20px, 22px);
+    text-shadow:
+    -1px -1px 0 rgb(255, 255, 255),
+     1px -1px 0 rgb(255, 255, 255),
+    -1px  1px 0 rgb(255, 255, 255),
+     1px  1px 0 rgb(255, 255, 255);
+    user-select: none;
+}
+
+.task_list {
+  flex: 1;
+}
+
+.task {
+  background: white;
+  border: 1px solid #ccc;
+  user-select: none;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  display: flex;
+  justify-content: space-between;
+}
+
+.task_title {
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+.task_story_points {
+  background-color: #0000001e;
+  font-size: 14px;
+  height: fit-content;
+  white-space: nowrap;
+}
+
+.story_points_wrapper {
+  display: flex;
+  align-items: end;
+}
+
+.add_button_wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.add_button {
+  border: none;
+  cursor: pointer;
+  background-color: #0000002b;
+  width: 95%;
+  padding: 5px 0px;
+  border-radius: 10px;
+  font-weight: bolder;
+  color:rgba(0, 0, 0, 0.3);
+  transition: background-color 0.2s ease, color 0.2s ease, border 0.2s ease;
+}
+
+.add_button:hover {
+  background-color: #00000025;
+  border: 1px solid rgba(0, 0, 0, 0.501);
+  color:rgba(0, 0, 0, 0.66);
+}

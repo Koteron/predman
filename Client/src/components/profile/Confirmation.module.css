@@ -1,0 +1,20 @@
+.confirmation_wrapper {
+    display: flex; 
+    justify-content: space-between;
+}
+
+.yes_button {
+    background-color: rgb(153, 18, 18);
+}
+
+.yes_button:hover {
+    background-color: rgb(199, 23, 23);
+}
+
+.no_button {
+    background-color: rgb(18, 153, 56);
+}
+
+.no_button:hover {
+    background-color: rgb(23, 199, 99);
+}
