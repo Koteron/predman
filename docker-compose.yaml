@@ -51,7 +51,18 @@ services:
             - DATABASE_NAME=predman-db
         networks:
             - predman-network
-            
+    
+    client:
+        image: predman-client:latest
+        container_name: predman-client
+        build:
+            context: ./Client
+            dockerfile: Dockerfile
+        ports:
+            - 5173:5173
+        networks:
+            - predman-network
+
 volumes:
     db:
         driver: local
