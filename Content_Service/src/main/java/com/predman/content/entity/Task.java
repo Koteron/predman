@@ -38,6 +38,10 @@ public class Task {
 
 	private Double storyPoints;
 
+	@OneToOne
+	@JoinColumn(name = "next")
+	private Task next;
+
 	@Enumerated(EnumType.STRING)
 	private TaskStatus status;
 

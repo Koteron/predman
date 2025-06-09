@@ -17,6 +17,8 @@ public record TaskCreationDto (
 
     String description,
 
+    UUID next,
+
     @JsonProperty("story_points")
     Double storyPoints
 ) { }

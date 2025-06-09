@@ -13,7 +13,11 @@ import java.util.UUID;
 public interface ProjectMemberService {
     List<UserDto> getUsersByProjectId(UUID projectId);
     List<ProjectDto> getProjectsByUserId(UUID userId);
-    ProjectMemberDto addProjectMember(User fetchedUser, Project fetchedProject);
+    UserDto addProjectMember(User fetchedUser, Project fetchedProject);
+    UserDto addProjectMemberStatUpdate(User fetchedUser, Project fetchedProject);
     void removeProjectMember(ProjectMemberDto projectMemberDto);
     List<ProjectMember> findAllByProjectIds(List<UUID> projectIds);
+    void deleteAllByProjectId (UUID projectId);
+    void deleteAllByUserId (UUID userId);
+
 }

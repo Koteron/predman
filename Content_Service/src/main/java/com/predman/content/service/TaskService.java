@@ -1,5 +1,6 @@
 package com.predman.content.service;
 
+import com.predman.content.dto.task.SortedTasksDto;
 import com.predman.content.dto.task.TaskCreationDto;
 import com.predman.content.dto.task.TaskDto;
 import com.predman.content.dto.task.TaskUpdateDto;
@@ -15,4 +16,5 @@ public interface TaskService {
     TaskDto getById(UUID id);
     Task getEntityById(UUID id);
     List<TaskDto> getAllByProjectId(UUID projectId);
+    SortedTasksDto getSortedAllByProjectId(UUID projectId);
 }

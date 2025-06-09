@@ -11,6 +11,6 @@ import java.util.UUID;
 public interface TaskAssignmentService {
     List<UserDto> getAllAssigneesByTaskId(UUID taskId);
     List<TaskDto> getAllTasksByUserId(UUID userId);
-    TaskAssignmentDto assignTask(UUID taskId, User user);
+    UserDto assignTask(UUID taskId, User user);
     void removeAssignment(UUID taskId, User user);
 }

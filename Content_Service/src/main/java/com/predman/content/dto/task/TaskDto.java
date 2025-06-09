@@ -20,5 +20,7 @@ public record TaskDto (
     @JsonProperty("story_points")
     Double storyPoints,
 
+    UUID next,
+
     TaskStatus status
 ) { }

@@ -53,9 +53,9 @@ public class TaskController {
     }
 
     @GetMapping("/project/{project-id}")
-    public List<TaskDto> getAllTasksByProjectId(@PathVariable("project-id") UUID projectId) {
+    public SortedTasksDto getAllTasksByProjectId(@PathVariable("project-id") UUID projectId) {
         projectMembershipUtil.checkSelfProjectMembership(projectId);
-        return taskService.getAllByProjectId(projectId);
+        return taskService.getSortedAllByProjectId(projectId);
     }
 
     @PatchMapping("/{task-id}")
@@ -81,7 +81,7 @@ public class TaskController {
     }
 
     @PostMapping("/assignments/new/{user-id}")
-    public TaskAssignmentDto assignUserToTask(@PathVariable("user-id") UUID userId,
+    public UserDto assignUserToTask(@PathVariable("user-id") UUID userId,
                                               @RequestBody @Valid TaskProjectPairDto taskProjectPairDto) {
         User user = userService.getEntityById(userId);
         projectMembershipUtil.checkSelfProjectMembership(taskProjectPairDto.projectId());

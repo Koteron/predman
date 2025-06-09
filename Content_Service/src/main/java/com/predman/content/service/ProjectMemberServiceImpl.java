@@ -6,12 +6,13 @@ import com.predman.content.dto.user.detailed.UserDto;
 import com.predman.content.entity.Project;
 import com.predman.content.entity.ProjectMember;
 import com.predman.content.entity.User;
+import com.predman.content.exception.ForbiddenException;
 import com.predman.content.exception.NotFoundException;
 import com.predman.content.mapper.ProjectMapper;
 import com.predman.content.mapper.UserMapper;
 import com.predman.content.repository.ProjectMemberRepository;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,12 +20,28 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     private final ProjectMemberRepository projectMemberRepository;
     private final UserMapper userMapper;
     private final ProjectMapper projectMapper;
+    private final ProjectService projectService;
+    private final UserService userService;
+    private final ProjectStatisticsService projectStatisticsService;
+
+    public ProjectMemberServiceImpl(ProjectMemberRepository projectMemberRepository,
+                                    @Lazy UserService userService,
+                                    ProjectMapper projectMapper,
+                                    ProjectService projectService,
+                                    UserMapper userMapper,
+                                    @Lazy ProjectStatisticsService projectStatisticsService) {
+        this.projectMemberRepository = projectMemberRepository;
+        this.userService = userService;
+        this.projectMapper = projectMapper;
+        this.projectService = projectService;
+        this.userMapper = userMapper;
+        this.projectStatisticsService = projectStatisticsService;
+    }
 
     @Override
     public List<UserDto> getUsersByProjectId(UUID projectId)
@@ -44,7 +61,16 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
 
     @Override
     @Transactional
-    public ProjectMemberDto addProjectMember(User fetchedUser, Project fetchedProject)
+    public UserDto addProjectMemberStatUpdate(User fetchedUser, Project fetchedProject)
+    {
+        UserDto userDto = addProjectMember(fetchedUser, fetchedProject);
+        projectStatisticsService.updateStatistics(fetchedProject.getId());
+        return userDto;
+    }
+
+    @Override
+    @Transactional
+    public UserDto addProjectMember(User fetchedUser, Project fetchedProject)
     {
         if (fetchedProject == null)
         {
@@ -55,31 +81,49 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
             throw new NotFoundException("User cannot be null");
         }
 
-        ProjectMember projectMember = projectMemberRepository.save(ProjectMember
+        projectMemberRepository.save(ProjectMember
                 .builder()
                 .user(fetchedUser)
                 .project(fetchedProject)
                 .joinedAt(LocalDateTime.now())
                 .build());
 
-        return ProjectMemberDto
-                .builder()
-                .projectId(projectMember.getProject().getId())
-                .userId(projectMember.getUser().getId())
-                .build();
+        return userMapper.convertToUserDto(fetchedUser);
     }
 
     @Override
     @Transactional
     public void removeProjectMember(ProjectMemberDto projectMemberDto)
     {
+        Project project = projectService.getEntityById(projectMemberDto.projectId());
         ProjectMember entry = projectMemberRepository.findAllByUser_Id(projectMemberDto.userId())
                 .stream().filter((ProjectMember projectMember) ->
-                        projectMember.getProject().getId() == projectMemberDto.projectId()).findAny()
+                        project.getId() == projectMemberDto.projectId()).findAny()
                 .orElseThrow(() -> new NotFoundException("User is not a part of this project!"));
+        User owner = project.getOwner();
+        if (owner.getId().equals(projectMemberDto.userId()))
+        {
+            projectService.changeOwnerRandom(owner.getId(), project.getId());
+            projectMemberRepository.deleteById(entry.getId());
+        }
         projectMemberRepository.deleteById(entry.getId());
+        if (projectMemberRepository.findAllByProject_Id(projectMemberDto.projectId()).isEmpty()) {
+            projectService.delete(projectService.getEntityById(projectMemberDto.projectId()));
+        }
+        else {
+            projectStatisticsService.updateStatistics(project.getId());
+        }
     }
 
+    @Override
+    public void deleteAllByProjectId (UUID projectId) {
+        projectMemberRepository.deleteAllByProject_Id(projectId);
+    }
+
+    @Override
+    public void deleteAllByUserId (UUID userId) {
+        projectMemberRepository.deleteAllByUser_Id(userId);
+    }
 
     @Override
     public List<ProjectMember> findAllByProjectIds(List<UUID> projectIds)

@@ -20,6 +20,6 @@ public interface ProjectService {
     void delete(Project project);
     ProjectDto changeOwnerChecked(Project project, String newOwnerEmail);
     ProjectDto changeOwnerUnchecked(Project project, User newOwner);
-
+    void changeOwnerRandom(UUID previousOwnerId, UUID projectId);
 
 }

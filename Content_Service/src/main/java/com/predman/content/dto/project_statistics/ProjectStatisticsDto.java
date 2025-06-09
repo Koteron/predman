@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import org.springframework.lang.NonNull;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -43,6 +44,6 @@ public record ProjectStatisticsDto(
     Double externalRiskProbability,
 
     @JsonProperty(value = "saved_at")
-    LocalDateTime savedAt
+    LocalDate savedAt
 ) {
 }

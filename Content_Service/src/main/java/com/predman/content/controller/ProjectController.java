@@ -41,16 +41,19 @@ public class ProjectController {
 
     @GetMapping("/info/{project-id}")
     public ProjectFullInfoDto getProjectFullInfoById(@PathVariable("project-id") UUID projectId) {
+        projectMembershipUtil.checkSelfProjectMembership(projectId);
         return projectService.getFullInfoById(projectId);
     }
 
     @GetMapping("/{project-id}")
     public ProjectDto getProjectById(@PathVariable("project-id") UUID projectId) {
+        projectMembershipUtil.checkSelfProjectMembership(projectId);
         return projectService.getById(projectId);
     }
 
     @GetMapping("/task_list/{project-id}")
     public ProjectTaskListDto getProjectWithTaskListById(@PathVariable("project-id") UUID projectId) {
+        projectMembershipUtil.checkSelfProjectMembership(projectId);
         return projectService.getWithTaskListById(projectId);
     }
 
@@ -65,27 +68,30 @@ public class ProjectController {
     public ProjectFullInfoDto updateProject(@PathVariable("project-id") UUID projectId,
                                             @RequestBody ProjectUpdateDto projectUpdateDto) {
         Project project = projectService.getEntityById(projectId);
-        userService.checkAuthenticatedUser(project.getOwner().getId());
+        projectMembershipUtil.checkSelfProjectMembership(projectId);
         return projectService.update(project, projectUpdateDto);
     }
 
     @PostMapping("/members")
-    public ProjectMemberDto addMemberToProject(@RequestBody ProjectMemberUpdateDto projectMemberUpdateDto) {
+    public UserDto addMemberToProject(@RequestBody ProjectMemberUpdateDto projectMemberUpdateDto) {
         Project project = projectService.getEntityById(projectMemberUpdateDto.projectId());
         userService.checkAuthenticatedUser(project.getOwner().getId());
-        return projectMemberService.addProjectMember(
+        return projectMemberService.addProjectMemberStatUpdate(
                 userService.getEntityByEmail(projectMemberUpdateDto.userEmail()), project);
     }
 
     @DeleteMapping("/members")
     public void removeUserFromProject(@RequestBody @Valid ProjectMemberDto projectMemberDto) {
         Project project = projectService.getEntityById(projectMemberDto.projectId());
-        userService.checkAuthenticatedUser(project.getOwner().getId());
+        if (!userService.getAuthenticatedUser().getId().equals(projectMemberDto.userId())) {
+            userService.checkAuthenticatedUser(project.getOwner().getId());
+        }
         projectMemberService.removeProjectMember(projectMemberDto);
     }
 
     @GetMapping("/members/{project-id}")
     public List<UserDto> getAllUsersByProjectId(@PathVariable("project-id") UUID projectId) {
+        projectMembershipUtil.checkSelfProjectMembership(projectId);
         return projectMemberService.getUsersByProjectId(projectId);
     }
 

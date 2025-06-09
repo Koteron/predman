@@ -1,8 +1,10 @@
 package com.predman.content.repository;
 
 import com.predman.content.entity.TaskDependency;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -12,12 +14,14 @@ public interface TaskDependencyRepository extends JpaRepository<TaskDependency, 
     @EntityGraph(attributePaths = {"task"})
     List<TaskDependency> findAllByTaskId(UUID taskId);
 
+    @Transactional
+    @Modifying(clearAutomatically = true)
     @Query(value = """
-    DELETE FROM task_dependency
+    DELETE FROM task_dependencies
     WHERE task_id = :taskId
     AND dependency_id = :dependencyId
     """, nativeQuery = true)
-    void deleteByIdPair(UUID taskId, UUID dependencyId);
+    int deleteByIdPair(UUID taskId, UUID dependencyId);
 
     @Query(value = """
     SELECT td.*

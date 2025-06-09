@@ -45,7 +45,7 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
                         .externalRiskProbability(projectStatistics.getExternalRiskProbability())
                         .sumExperience(projectStatistics.getSumExperience())
                         .availableHours(projectStatistics.getAvailableHours())
-                        .savedAt(projectStatistics.getSavedAt())
+                        .savedAt(projectStatistics.getSavedAt().toLocalDate())
                         .build()).toList();
     }
 
@@ -54,7 +54,31 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
     public ProjectStatistics updateStatistics(UUID projectId) {
         ProjectStatistics projectStatistics = projectStatisticsRepository.findLatestStatisticsByProjectId(projectId);
         ProjectStatistics updatedProjectStatistics = reevaluateProjectStatistics(projectId);
-        if (ChronoUnit.HOURS.between(projectStatistics.getSavedAt(), LocalDateTime.now()) <= 24) {
+        if (projectStatistics.getSavedAt().toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
+            updatedProjectStatistics.setId(projectStatistics.getId());
+        }
+        return projectStatisticsRepository.save(updatedProjectStatistics);
+    }
+
+    @Override
+    @Transactional
+    public ProjectStatistics updateStatisticsByUpdatedProject(Project updatedProject) {
+        ProjectStatistics projectStatistics =
+                projectStatisticsRepository.findLatestStatisticsByProjectId(updatedProject.getId());
+        ProjectStatistics updatedProjectStatistics = ProjectStatistics.builder()
+                .project(projectStatistics.getProject())
+                .criticalPathLength(projectStatistics.getCriticalPathLength())
+                .dependencyCoefficient(projectStatistics.getDependencyCoefficient())
+                .remainingStoryPoints(projectStatistics.getRemainingStoryPoints())
+                .remainingTasks(projectStatistics.getRemainingTasks())
+                .availableHours(updatedProject.getAvailableHours())
+                .sumExperience(updatedProject.getSumExperience())
+                .externalRiskProbability(updatedProject.getExternalRiskProbability())
+                .teamSize(projectStatistics.getTeamSize())
+                .daysSinceStart((int) ChronoUnit.DAYS.between(updatedProject.getCreatedDate(), LocalDateTime.now()))
+                .savedAt(LocalDateTime.now())
+                .build();
+        if (projectStatistics.getSavedAt().toLocalDate().isEqual(LocalDateTime.now().toLocalDate())) {
             updatedProjectStatistics.setId(projectStatistics.getId());
         }
         return projectStatisticsRepository.save(updatedProjectStatistics);
@@ -93,6 +117,8 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
         List<TaskDependencyDto> dependencyList = taskDependencyService.getAllProjectDependencies(projectId);
 
         int dependentTaskNumber = (int)dependencyList.stream()
+                .filter(taskDepDto -> remainingTaskMap.containsKey(taskDepDto.taskId())
+                        && remainingTaskMap.containsKey(taskDepDto.dependencyId()))
                 .map(TaskDependencyDto::taskId)
                 .distinct()
                 .count();

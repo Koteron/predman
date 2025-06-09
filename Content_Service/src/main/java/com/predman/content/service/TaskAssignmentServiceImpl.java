@@ -37,17 +37,18 @@ public class TaskAssignmentServiceImpl implements TaskAssignmentService {
     }
 
     @Override
-    public TaskAssignmentDto assignTask(UUID taskId, User user) {
+    public UserDto assignTask(UUID taskId, User user) {
         TaskAssignment newEntry = TaskAssignment.builder()
                 .joinedAt(LocalDateTime.now())
                 .task(taskService.getEntityById(taskId))
                 .user(user)
                 .build();
         taskAssignmentRepository.save(newEntry);
-        return TaskAssignmentDto
+        return UserDto
                 .builder()
-                .taskId(taskId)
-                .userId(user.getId())
+                .id(user.getId())
+                .email(user.getEmail())
+                .login(user.getLogin())
                 .build();
     }
 

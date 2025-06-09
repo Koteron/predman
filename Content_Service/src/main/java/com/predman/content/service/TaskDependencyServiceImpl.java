@@ -23,7 +23,7 @@ public class TaskDependencyServiceImpl implements TaskDependencyService {
                 .stream().map(taskDependency -> TaskDependencyDto
                 .builder()
                 .taskId(taskDependency.getTask().getId())
-                .dependencyId(taskDependency.getTask().getId())
+                .dependencyId(taskDependency.getDependency().getId())
                 .build()).toList();
     }
 
@@ -32,20 +32,21 @@ public class TaskDependencyServiceImpl implements TaskDependencyService {
                 .stream().map(taskDependency -> TaskDependencyDto
                 .builder()
                 .taskId(taskDependency.getTask().getId())
-                .dependencyId(taskDependency.getTask().getId())
+                .dependencyId(taskDependency.getDependency().getId())
                 .build()).toList();
     }
 
     public TaskDependencyDto createTaskDependency(TaskDependencyDto taskDependencyDto) {
         if (taskDependencyDto.dependencyId().equals(taskDependencyDto.taskId())) {
-            throw new ForbiddenException("Task dependency with id " + taskDependencyDto.taskId() + " already exists");
+            throw new ForbiddenException("Task with id: " + taskDependencyDto.taskId()
+                    + " cannot be dependent on itself");
         }
         taskDependencyRepository.save(TaskDependency
                 .builder()
                 .dependency(taskRepository.findById(taskDependencyDto.dependencyId())
                         .orElseThrow(() -> new NotFoundException("Dependency task not found!")))
                 .task(taskRepository.findById(taskDependencyDto.taskId())
-                        .orElseThrow(() -> new NotFoundException("Dependency task not found!")))
+                        .orElseThrow(() -> new NotFoundException("Dependent task not found!")))
                 .build());
         return taskDependencyDto;
     }

@@ -16,6 +16,7 @@ import com.predman.content.exception.UnauthorizedException;
 import com.predman.content.mapper.UserMapper;
 import com.predman.content.repository.UserRepository;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class UserServiceImpl implements UserService {
         User user = entityManager.find(User.class, id);
         if (user == null)
         {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("User entity not found by id");
         }
         return user;
     }
@@ -56,28 +57,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getEntityByEmail(String email)
     {
-        TypedQuery<User> query = entityManager.createQuery(
-                "SELECT u FROM User u WHERE u.email = :email", User.class);
-        query.setParameter("email", email);
-        User user = query.getSingleResult();
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
+        try {
+            TypedQuery<User> query = entityManager.createQuery(
+                    "SELECT u FROM User u WHERE u.email = :email", User.class);
+            query.setParameter("email", email);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("User entity not found by email");
         }
-        return user;
     }
 
     @Override
     public UserDto getById(UUID id)
     {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("User not found!"));
+        User user = userRepository.findById(id).orElseThrow(() ->
+                new NotFoundException("User not found by id!"));
         return userMapper.convertToUserDto(user);
     }
 
     @Override
     public UserDto getByEmail(String email)
     {
-        User user = userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException("User not found!"));
+        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                new NotFoundException("User not found by email!"));
         return userMapper.convertToUserDto(user);
     }
 
@@ -128,14 +130,15 @@ public class UserServiceImpl implements UserService {
                     .map(ProjectMember::getUser)
                     .filter(u -> !u.getId().equals(userId))
                     .toList();
-
             if (!alternativeOwners.isEmpty()) {
                 User newOwner = alternativeOwners.get(ThreadLocalRandom.current().nextInt(alternativeOwners.size()));
                 projectService.changeOwnerUnchecked(project, newOwner);
             } else {
+                projectMemberService.deleteAllByProjectId(project.getId());
                 projectService.delete(project);
             }
         }
+        projectMemberService.deleteAllByUserId(userId);
         userRepository.deleteById(userId);
     }
 

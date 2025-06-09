@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface ProjectStatisticsService {
     List<ProjectStatisticsDto> getProjectStatisticsByProjectId(UUID projectId);
     ProjectStatistics updateStatistics(UUID projectId);
+    ProjectStatistics updateStatisticsByUpdatedProject(Project updatedProject);
     void initializeStatistics(Project project);
     List<ProjectStatistics> getAllLatestStatistics();
 }

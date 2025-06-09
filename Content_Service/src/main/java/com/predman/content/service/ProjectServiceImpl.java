@@ -4,10 +4,12 @@ import com.predman.content.dto.grpc.PredictionDto;
 import com.predman.content.dto.project.*;
 import com.predman.content.dto.user.detailed.UserDto;
 import com.predman.content.entity.Project;
+import com.predman.content.entity.ProjectMember;
 import com.predman.content.entity.User;
 import com.predman.content.exception.ForbiddenException;
 import com.predman.content.exception.NotFoundException;
 import com.predman.content.mapper.ProjectMapper;
+import com.predman.content.mapper.UserMapper;
 import com.predman.content.repository.ProjectRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
@@ -19,6 +21,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -30,6 +33,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectStatisticsService projectStatisticsService;
     private final TaskService taskService;
     private final StatisticsService statisticsService;
+    private final UserMapper userMapper;
 
     ProjectServiceImpl(@Lazy ProjectMemberService projectMemberService,
                        @Lazy UserService userService,
@@ -38,7 +42,7 @@ public class ProjectServiceImpl implements ProjectService {
                        EntityManager entityManager,
                        @Lazy ProjectStatisticsService projectStatisticsService,
                        @Lazy TaskService taskService,
-                       StatisticsService statisticsService) {
+                       StatisticsService statisticsService, UserMapper userMapper) {
         this.projectRepository = projectRepository;
         this.projectMapper = projectMapper;
         this.projectMemberService = projectMemberService;
@@ -47,6 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
         this.projectStatisticsService = projectStatisticsService;
         this.statisticsService = statisticsService;
         this.taskService = taskService;
+        this.userMapper = userMapper;
     }
 
     @Override
@@ -99,6 +104,7 @@ public class ProjectServiceImpl implements ProjectService {
                 || projectUpdateDto.externalRiskProbability() != null
                 || projectUpdateDto.sumExperience() != null)
         {
+            projectStatisticsService.updateStatisticsByUpdatedProject(updatedProject);
             PredictionDto prediction = statisticsService.getPrediction(updatedProject.getId(),
                     (int) ChronoUnit.DAYS.between(
                     updatedProject.getCreatedDate().toLocalDate(),
@@ -108,13 +114,23 @@ public class ProjectServiceImpl implements ProjectService {
             updatedProject.setPredictedDeadline(
                     project.getCreatedDate().toLocalDate().plusDays(prediction.predictedDays()));
         }
+        else {
+            updatedProject.setPredictedDeadline(project.getPredictedDeadline());
+            updatedProject.setCertaintyPercent(project.getCertaintyPercent());
+        }
         return projectMapper.convertToProjectFullInfoDto(projectRepository.save(updatedProject));
     }
 
     @Override
     public ProjectFullInfoDto updatePrediction(Project project) {
-        PredictionDto prediction = statisticsService.getPrediction(project.getId(), (int) ChronoUnit.DAYS.between(
-                project.getCreatedDate().toLocalDate(), project.getDueDate()));
+        PredictionDto prediction;
+        try {
+            prediction = statisticsService.getPrediction(project.getId(), (int) ChronoUnit.DAYS.between(
+                    project.getCreatedDate().toLocalDate(), project.getDueDate()));
+        }
+        catch (Exception e) {
+            prediction = PredictionDto.builder().predictedDays(0).certaintyPercent(0.0).build();
+        }
         return projectMapper.convertToProjectFullInfoDto(projectRepository.save(Project.builder()
                 .id(project.getId())
                 .description(project.getDescription())
@@ -199,5 +215,21 @@ public class ProjectServiceImpl implements ProjectService {
             throw new NotFoundException("User is not a part of this project!");
         }
         return changeOwnerUnchecked(project, userService.getEntityByEmail(newOwnerEmail));
+    }
+
+    @Override
+    public void changeOwnerRandom(UUID previousOwnerId, UUID projectId) {
+        List<UserDto> members = projectMemberService.getUsersByProjectId(projectId);
+        List<UserDto> alternativeOwners = members.stream()
+                .filter(u -> !u.id().equals(previousOwnerId))
+                .toList();
+
+        if (!alternativeOwners.isEmpty()) {
+            User newOwner = userMapper.convertToUserEntity(
+                    alternativeOwners.get(ThreadLocalRandom.current().nextInt(alternativeOwners.size())));
+            changeOwnerUnchecked(getEntityById(projectId), newOwner);
+        } else {
+            projectRepository.deleteById(projectId);
+        }
     }
 }

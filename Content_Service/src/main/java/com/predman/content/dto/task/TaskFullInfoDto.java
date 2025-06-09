@@ -23,5 +23,7 @@ public record TaskFullInfoDto (
 
         TaskStatus status,
 
+        UUID next,
+
         List<UUID> dependencies
 ) { }

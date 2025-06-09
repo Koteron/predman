@@ -1,8 +1,10 @@
 package com.predman.content.repository;
 
 import com.predman.content.entity.ProjectMember;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -22,4 +24,15 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, UU
     WHERE pm.project.id IN :projectIds
 """)
     List<ProjectMember> findAllByProjectIds(@Param("projectIds") List<UUID> projectIds);
+
+    @Transactional
+    @Modifying(clearAutomatically = true)
+    @Query(value = """
+    DELETE FROM project_members
+    WHERE project_id = :projectId
+    """, nativeQuery = true)
+    int deleteById(UUID taskId, UUID dependencyId);
+
+    void deleteAllByProject_Id(UUID projectId);
+    void deleteAllByUser_Id(UUID userId);
 }
