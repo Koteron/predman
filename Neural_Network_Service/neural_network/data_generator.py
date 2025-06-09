@@ -46,7 +46,7 @@ def generate_project_data_new(
         initial_tasks=50,
         external_risk_change=0.1,
         team_size_change_probability=0.0005,
-        task_add_probability=0.001,
+        task_amount_change_probability=0.001,
         truncation_probability=0.3,
         external_risk=0.05,
         sp_min=1, sp_max=10,
@@ -132,7 +132,7 @@ def generate_project_data_new(
             available_hours = sum(available_hours_array)
 
         # With some probability, add a new task (with potential dependencies).
-        if random.random() < task_add_probability:
+        if random.random() < task_amount_change_probability:
             sp = random.randint(sp_min, sp_max)
             new_task = {
                 'story_points': sp,
@@ -208,7 +208,7 @@ def save_project_history(folder_path, index):
         initial_tasks=round(random.uniform(15, 150)),
         external_risk_change=round(random.uniform(0.05, 0.1), 2),
         team_size_change_probability=random.uniform(0.00001, 0.001),
-        task_add_probability=random.uniform(0.0001, 0.001),
+        task_amount_change_probability=random.uniform(0.0001, 0.001),
         truncation_probability=0.95,
         external_risk=round(random.uniform(0.01, 0.1), 4),
         sp_min=1, sp_max=10,
