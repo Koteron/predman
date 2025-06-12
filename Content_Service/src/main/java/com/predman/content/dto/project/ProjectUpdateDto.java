@@ -1,9 +1,11 @@
 package com.predman.content.dto.project;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record ProjectUpdateDto(
         String name,
 

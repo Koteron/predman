@@ -6,7 +6,6 @@ import com.predman.content.dto.user.detailed.UserDto;
 import com.predman.content.entity.Project;
 import com.predman.content.entity.ProjectMember;
 import com.predman.content.entity.User;
-import com.predman.content.exception.ForbiddenException;
 import com.predman.content.exception.NotFoundException;
 import com.predman.content.mapper.ProjectMapper;
 import com.predman.content.mapper.UserMapper;
@@ -26,7 +25,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     private final UserMapper userMapper;
     private final ProjectMapper projectMapper;
     private final ProjectService projectService;
-    private final UserService userService;
     private final ProjectStatisticsService projectStatisticsService;
 
     public ProjectMemberServiceImpl(ProjectMemberRepository projectMemberRepository,
@@ -36,7 +34,6 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
                                     UserMapper userMapper,
                                     @Lazy ProjectStatisticsService projectStatisticsService) {
         this.projectMemberRepository = projectMemberRepository;
-        this.userService = userService;
         this.projectMapper = projectMapper;
         this.projectService = projectService;
         this.userMapper = userMapper;

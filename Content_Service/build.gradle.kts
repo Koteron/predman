@@ -4,6 +4,7 @@ plugins {
 	id("io.spring.dependency-management") version "1.1.7"
 	id("org.liquibase.gradle") version "2.2.0"
 	id("com.google.protobuf") version "0.9.4"
+	id("jacoco")
 }
 
 liquibase {
@@ -65,6 +66,13 @@ dependencies {
 	liquibaseRuntime("info.picocli:picocli:4.7.5")
 	liquibaseRuntime("ch.qos.logback:logback-classic:1.4.12")
 	liquibaseRuntime(sourceSets.main.get().runtimeClasspath)
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation("org.assertj:assertj-core")
+	testImplementation("org.junit.jupiter:junit-jupiter-api")
+	testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+	testImplementation("org.mockito:mockito-core")
+	testImplementation("com.h2database:h2")
 }
 
 tasks.withType<Test> {
@@ -100,4 +108,38 @@ sourceSets {
 
 tasks.compileJava {
 	dependsOn("generateProto")
+}
+
+jacoco {
+	toolVersion = "0.8.11"
+}
+
+tasks.test {
+	useJUnitPlatform()
+}
+
+tasks.jacocoTestReport {
+	dependsOn(tasks.test)
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+		csv.required.set(false)
+	}
+}
+afterEvaluate {
+	tasks.named<JacocoReport>("jacocoTestReport") {
+		classDirectories.setFrom(files(classDirectories.files.map {
+			fileTree(it) {
+				exclude(
+					"com/predman/statistics/**"
+				)
+			}
+		}))
+	}
+}
+
+tasks.register("coverage") {
+	group = "verification"
+	description = "Runs tests and generates JaCoCo coverage report"
+	dependsOn(tasks.test, tasks.jacocoTestReport)
 }

@@ -16,7 +16,6 @@ public class UserMapper {
                 .id(user.getId())
                 .email(user.getEmail())
                 .login(user.getLogin())
-                .passwordHash(user.getPasswordHash())
                 .build();
     }
 
@@ -25,7 +24,6 @@ public class UserMapper {
                 .id(userDto.id())
                 .email(userDto.email())
                 .login(userDto.login())
-                .passwordHash(userDto.passwordHash())
                 .build();
     }
 

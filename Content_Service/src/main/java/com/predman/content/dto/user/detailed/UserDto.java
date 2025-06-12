@@ -10,10 +10,7 @@ public record UserDto(
     UUID id,
 
     String login,
-
-    @JsonIgnore
-    String passwordHash,
-
+    
     String email
 )
 { }

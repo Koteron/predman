@@ -12,9 +12,6 @@ public record UserRegisterDto(
         @NotNull
         String password,
 
-        @JsonIgnore
-        String passwordHash,
-
         @NotNull
         String email
 ) { }

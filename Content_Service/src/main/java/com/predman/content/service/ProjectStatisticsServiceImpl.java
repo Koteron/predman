@@ -24,7 +24,6 @@ public class ProjectStatisticsServiceImpl implements ProjectStatisticsService {
     private final ProjectMemberService projectMemberService;
     private final TaskService taskService;
     private final TaskDependencyService taskDependencyService;
-    private final StatisticsService statisticsService;
 
     @Override
     @Transactional
