@@ -4,3 +4,7 @@ grpcio-tools
 numpy
 scipy
 tensorflow
+pytest
+pytest-asyncio
+pytest-cov
+grpcio-testing
