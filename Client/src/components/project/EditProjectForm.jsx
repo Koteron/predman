@@ -3,11 +3,9 @@ import { useEffect, useState } from "react";
 import styles from './ProjectStatistics.module.css'
 
 const EditProjectForm = ({ projectInfo, onSave }) => {
-    const { register, handleSubmit, formState: {errors, isSubmitting}, setError, reset } = useForm();
-    const [ isSubmitSuccessful, setIsSubmitSuccessful ] = useState(false);
+    const { register, handleSubmit, formState: {errors, isSubmitting, isSubmitSuccessful}, setError, reset } = useForm();
 
     const handleFormSubmition = async (data) => {
-        setIsSubmitSuccessful(false);
         const changedFields = {
             ...(data.name !== projectInfo.name && { name: data.name }),
             ...(data.description !== projectInfo.description && { description: data.description }),
@@ -23,8 +21,8 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
                 setError("root", {  message: result  });
                 return;
             }
+            return !result;
         }
-        setIsSubmitSuccessful(true);
     }
 
     useEffect(() => {
@@ -51,7 +49,9 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
             <form onSubmit={handleSubmit(handleFormSubmition)} style={{width:"100%"}}>
                 <div className={styles.input_container}> 
                 <label htmlFor='name'><b>Project name: </b></label>
-                <input className={styles.form_input} {...register("name", {
+                <input className={styles.form_input} 
+                                id="name"
+                                {...register("name", {
                                     required: "Please enter the project name!",
                                 })} type="text"/>
                                 
@@ -63,6 +63,7 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
                 <div className={styles.input_container}>
                 <label htmlFor='date'><b>Due date: </b></label>
                 <input className={styles.form_input} 
+                    id="date"
                     {...register("date", {
                         required: "Please enter the expected due date!",
                     })} type="date"
@@ -78,6 +79,7 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
                 <div className={styles.input_container}>
                     <label htmlFor='hours'><b>Available hours: </b></label>
                     <input className={styles.form_input}
+                            id="hours"
                             style={{width: "100px"}} 
                             min={0.0}
                             {...register("hours", {
@@ -95,6 +97,7 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
                 <div className={styles.input_container}>
                     <label htmlFor='exp'><b>Sum experience: </b></label>
                     <input className={styles.form_input}
+                            id="exp"
                             min={0.0}
                             {...register("exp", {
                                 min: 0,
@@ -111,6 +114,7 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
                 <div className={styles.input_container}>
                     <label htmlFor='ex_risk'><b>External risk probability: </b></label>
                     <input className={styles.form_input}
+                            id="ex_risk"
                             max={1.0}
                             min={0.0}
                             style={{width: "100px"}} 
@@ -129,7 +133,9 @@ const EditProjectForm = ({ projectInfo, onSave }) => {
 
                 <div className={styles.input_container}>
                 <label htmlFor='description'><b>Description: </b></label>
-                <textarea className={styles.form_input} {...register("description", {
+                <textarea className={styles.form_input} 
+                    id="description"
+                    {...register("description", {
                         })} placeholder="Description"
                         onInput={autoResize}
                     ref={(e) => {

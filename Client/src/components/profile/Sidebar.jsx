@@ -42,7 +42,7 @@ const Sidebar = ({ disabledProjectId }) => {
             setNewProjectOpen(false);
         }
         catch (e) {
-            return "Server error!"; // error codes.
+            return "Server error!";
         }
         return null;
     }

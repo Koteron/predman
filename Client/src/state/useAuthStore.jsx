@@ -13,6 +13,4 @@ const useAuthStore = create(persist(
   }
 ));
 
-// window.authStore = useAuthStore; // dev feature. To log out: authStore.getState().logout()
-
 export default useAuthStore;

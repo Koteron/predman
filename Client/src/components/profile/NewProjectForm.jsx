@@ -6,7 +6,10 @@ const NewProjectForm = ({ onCreateProject }) => {
 
     const handleFormSubmition = async (data) => {
         const result = await onCreateProject(data.name, data.description, data.date);
-        setError("root", {  message: result  });
+        if (result) {
+            setError("root", { message: result });
+        }
+        return !result;
     }
 
     const today = new Date().toISOString().split('T')[0]; 
@@ -14,14 +17,18 @@ const NewProjectForm = ({ onCreateProject }) => {
         <>
             <h2 style={{textAlign: "center"}}>Create new project</h2>
             <form onSubmit={handleSubmit(handleFormSubmition)} className={styles.modal_form}>
-                <input className={styles.form_input} {...register("name", {
+                <input className={styles.form_input} 
+                                id="name"
+                                {...register("name", {
                                     required: "Please enter the project name!",
                                 })} placeholder="Name" type="text"/>
                                 {errors.name && (<label htmlFor='name'>
                                     {errors.name.message}</label>)}
                 <div>
                     <label htmlFor='date'><b>Due date: </b></label>
-                    <input className={styles.form_input} {...register("date", {
+                    <input className={styles.form_input} 
+                                    id="date"
+                                    {...register("date", {
                                         required: "Please enter the expected due date!",
                                     })} type="date"
                                     min={today}/>
@@ -29,7 +36,9 @@ const NewProjectForm = ({ onCreateProject }) => {
                                 {errors.date && (<label htmlFor='date'>
                                     {errors.date.message}</label>)}
 
-                <textarea className={styles.form_input} {...register("description", {
+                <textarea className={styles.form_input} 
+                                id="description"
+                                {...register("description", {
                                 })} placeholder="Description" />
                 
                 <button className={`styled_button ${styles.submit_button}`}>Create</button>

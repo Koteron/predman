@@ -5,7 +5,7 @@ import Sidebar from '../components/profile/Sidebar';
 import { useState } from 'react';
 import Modal from '../components/common/Modal';
 import { deleteUser } from "../services/api";
-import Confirmation from '../components/profile/Confirmation';
+import Confirmation from '../components/common/Confirmation';
 import useProjectsStore from '../state/useProjectsStore';
 
 const Profile = () => {
@@ -47,8 +47,8 @@ const Profile = () => {
                     <div className={styles.profile_info_wrapper}>
                         <div>
                             <h1 style={{fontSize: "6vh"}}>Profile</h1>
-                            <p className={styles.profile_label}><b>Login:</b> {user && user.login}</p>
-                            <p className={styles.profile_label}><b>Email:</b> {user && user.email}</p>
+                            <p data-testid="profile_login" className={styles.profile_label}><b>Login:</b> {user && user.login}</p>
+                            <p data-testid="profile_email" className={styles.profile_label}><b>Email:</b> {user && user.email}</p>
                         </div>
                         <div>
                             <button onClick={handleLogout} className={`styled_button ${styles.logout_button}`}>Log out</button>

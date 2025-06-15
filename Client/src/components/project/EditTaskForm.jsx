@@ -14,8 +14,7 @@ import TaskInnerForm from './TaskInnerForm';
 const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask, projectId, tasks }) => {
     if (editingTask == null) return null;
 
-    const { register, handleSubmit, formState: {errors, isSubmitting}, reset, setError } = useForm();
-    const [ isSubmitSuccessful, setIsSubmitSuccessful ] = useState(false);
+    const { register, handleSubmit, formState: {errors, isSubmitting, isSubmitSuccessful}, reset, setError } = useForm();
     const [ assignees, setAssignees ] = useState(null);
     const [ members, setMembers ] = useState(null);
     const [ dependencies, setDependencies ] = useState(null);
@@ -87,7 +86,6 @@ const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask,
     }, [isSelectingAssignees])
 
     const handleFormSubmition = async (data) => {
-        setIsSubmitSuccessful(false);
         const changedFields = {
             ...(data.name != editingTask.name && { name: data.name }),
             ...(data.story_points != editingTask.story_points && { story_points: data.story_points }),
@@ -100,9 +98,12 @@ const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask,
                 setError("root", {  message: result  });
                 return;
             }
+            closeForm();
+            return !result;
         }
-        closeForm();
-        setIsSubmitSuccessful(true);
+        else {
+            closeForm();
+        }
     }
 
     const autoResize = (e) => {
@@ -186,7 +187,9 @@ const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask,
                     <div className={styles.inner_input_list_wrapper} style={{justifyContent: "space-around"}}>
                         <div>
                         <label htmlFor='story_points'><b>Name: </b></label>
-                        <input className={styles.form_input} {...register("name", {
+                        <input className={styles.form_input} 
+                                        id="name"
+                                        {...register("name", {
                                             required: "Please enter the task name!",
                                         })} placeholder="Name" type="text"
                                         />
@@ -196,6 +199,7 @@ const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask,
                         <div>
                         <label htmlFor='story_points'><b>Story points: </b></label>
                         <input className={styles.form_input}
+                                id="story_points"
                                 style={{width: "100px"}} 
                                 {...register("story_points", {
                                     required: "Please enter the amount of estimated story points!",
@@ -207,7 +211,9 @@ const EditTaskForm = ({ onSave, onDelete, closeForm, loadingDelete, editingTask,
                         </div>
                         <div style={{display: "flex"}}>
                             <label htmlFor='description' style={{marginRight: "5px"}}><b>Description: </b></label>
-                            <textarea className={styles.form_input} {...register("description")}
+                            <textarea className={styles.form_input} 
+                            id="description"
+                            {...register("description")}
                             placeholder={editingTask.decription}
                             onInput={autoResize}
                             ref={(e) => {

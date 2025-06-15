@@ -3,7 +3,7 @@ import Prediction from './Prediction';
 import TasksGraph from './TasksGraph';
 import UserList from './UserList';
 import Modal from '../common/Modal';
-import Confirmation from '../profile/Confirmation';
+import Confirmation from '../common/Confirmation';
 import styles from './ProjectStatistics.module.css'
 import { useEffect, useState } from 'react';
 import { addProjectMember,
@@ -31,28 +31,24 @@ const ProjectStatistics = ({ projectId }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const getMembers = async () => {
-            const response = await getProjectMembers(user.token, projectId);
-            setMembers(response);
-        }
-        const getInfo = async () => {
-            const response = await getFullProjectInfo(user.token, projectId);
-            setProjectInfo(response);
-        }
-        const getProjectStatistics = async () => {
-            const response = await getStatistics(user.token, projectId);
-            setStatistics(response);
-        }
-        try {
-            getMembers();
-            getInfo();
-            getProjectStatistics();
-        }
-        catch (e) {
-            if (e.response?.status === 403) {
-                navigate('/profile');
+        const loadData = async() => {
+            try {
+                const members = await getProjectMembers(user.token, projectId);
+                setMembers(members);
+
+                const info = await getFullProjectInfo(user.token, projectId);
+                setProjectInfo(info);
+
+                const stats = await getStatistics(user.token, projectId);
+                setStatistics(stats);
+            }
+            catch (e) {
+                if (e.response?.status === 403) {
+                    navigate('/profile');
+                }
             }
         }
+        loadData();
     }, [projectId]);
 
     const handleRemoveMember = async(memberId) => {

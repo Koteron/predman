@@ -6,14 +6,20 @@ const AddTaskForm = ({ onCreateTask }) => {
 
     const handleFormSubmition = async (data) => {
         const result = await onCreateTask(data.name, data.description, data.story_points);
-        setError("root", {  message: result  });
+        if (result)
+        {
+            setError("root", {  message: result  });
+        }
+        return !result;
     }
     
     return (
         <>
             <h2 style={{textAlign: "center"}}>Create new task</h2>
             <form onSubmit={handleSubmit(handleFormSubmition)} className={styles.modal_form}>
-                <input className={styles.form_input} {...register("name", {
+                <input className={styles.form_input} 
+                                id="name"
+                                {...register("name", {
                                     required: "Please enter the task name!",
                                 })} placeholder="Name" type="text"/>
                                 {errors.name && (<label htmlFor='name'>
@@ -21,6 +27,7 @@ const AddTaskForm = ({ onCreateTask }) => {
                 <div>
                 <label htmlFor='story_points'><b>Story points: </b></label>
                 <input className={styles.form_input}
+                        id="story_points"
                         style={{width: "100px"}} 
                         min={0.0}
                         {...register("story_points", {
@@ -31,7 +38,9 @@ const AddTaskForm = ({ onCreateTask }) => {
                 {errors.story_points && (<label htmlFor='story_points'>
                     {errors.story_points.message}</label>)}
 
-                <textarea className={styles.form_input} {...register("description", {
+                <textarea className={styles.form_input} 
+                                id="description"
+                                {...register("description", {
                                 })} placeholder="Description" />
                 
                 <button className={`styled_button ${styles.submit_button}`}>Create</button>

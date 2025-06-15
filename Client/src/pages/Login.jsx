@@ -63,7 +63,7 @@ const Login = () => {
                 <button className='styled_button' style={{fontSize:"15px", 
                     padding:"10px 15px", 
                     backgroundColor:"#15ab65"}} type="submit" disabled={isSubmitting}>Sign in</button>
-                {isSubmitting ? <img className='loading_animation' src="/assets/loading.gif"></img>
+                {isSubmitting ? <img data-testid="loading" className='loading_animation' src="/assets/loading.gif"></img>
                     : isSubmitSuccessful ? 
                     <p className='response-message'>Login successful!</p> 
                     : <p className={styles.error_message}>{errors.root && (errors.root.message)}</p>}
